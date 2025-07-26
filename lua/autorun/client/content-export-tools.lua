@@ -19,6 +19,8 @@ local parsedfolders = string.Explode(",", folderFilter:GetString())
 cvars.AddChangeCallback("cet_filter_mount", function(_, _, new) parsedMounts = string.Explode(",", new) end)
 cvars.AddChangeCallback("cet_filter_folders", function(_, _, new) parsedfolders = string.Explode(",", new) end)
 
+file.CreateDir("_export")
+
 local function checkFilter(path)
 	for _, mountPath in ipairs(parsedMounts) do
 		if file.Exists(path, mountPath) then
@@ -52,6 +54,12 @@ local function addFile(path)
 	end
 
 	if not checkFilter(path) then
+		return false
+	end
+
+	if file.Exists("_export/" .. path, "DATA") then
+		warn("Skipping %s: File already exists in _export", path)
+
 		return false
 	end
 
