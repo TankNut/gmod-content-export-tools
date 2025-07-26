@@ -245,7 +245,7 @@ concommand.Add("export_abort", function()
 	hook.Remove("PostRender", "cet_bulk")
 end)
 
-concommand.Add("cet_export_mdl", function(_, _, _, mdl)
+concommand.Add("mdl_export", function(_, _, _, mdl)
 	if string.Right(mdl, 4) != ".mdl" then
 		return
 	end
@@ -255,7 +255,7 @@ concommand.Add("cet_export_mdl", function(_, _, _, mdl)
 	finish()
 end)
 
-concommand.Add("cet_export_mdl_bulk", function(_, _, _, path)
+concommand.Add("mdl_export_bulk", function(_, _, _, path)
 	if string.Right(path, 1) == "/" then
 		path = string.sub(path, 1, -1)
 	end
@@ -266,13 +266,13 @@ concommand.Add("cet_export_mdl_bulk", function(_, _, _, path)
 	handleBulk(getFileList(path, "mdl"), processModel)
 end)
 
-concommand.Add("cet_export_mat", function(_, _, _, mat)
+concommand.Add("mat_export", function(_, _, _, mat)
 	init()
 	processMaterial(mat)
 	finish()
 end)
 
-concommand.Add("cet_export_mat_bulk", function(_, _, _, path)
+concommand.Add("mat_export_bulk", function(_, _, _, path)
 	if string.Right(path, 1) == "/" then
 		path = string.sub(path, 1, -1)
 	end
@@ -283,14 +283,14 @@ concommand.Add("cet_export_mat_bulk", function(_, _, _, path)
 	handleBulk(getFileList(path, "vmt"), processMaterial)
 end)
 
-concommand.Add("cet_export_snd", function(_, _, _, snd)
+concommand.Add("snd_export", function(_, _, _, snd)
 	init()
 	msg("Sound: sound/%s", snd)
 	addFile("sound/" .. snd)
 	finish()
 end)
 
-concommand.Add("cet_export_snd_bulk", function(_, _, _, path)
+concommand.Add("snd_export_bulk", function(_, _, _, path)
 	if string.Right(path, 1) == "/" then
 		path = string.sub(path, 1, -1)
 	end
@@ -301,13 +301,13 @@ concommand.Add("cet_export_snd_bulk", function(_, _, _, path)
 	handleBulk(getFileList(path, {"ogg", "wav", "mp3"}), addFile)
 end)
 
-concommand.Add("cet_export_soundscript", function(_, _, _, soundscript)
+concommand.Add("soundscript_export", function(_, _, _, soundscript)
 	init()
 	processSoundscript(soundscript)
 	finish()
 end)
 
-concommand.Add("cet_export_soundscript_bulk", function(_, _, _, soundscript)
+concommand.Add("soundscript_export_bulk", function(_, _, _, soundscript)
 	local scripts = {}
 
 	for _, name in sound.GetTable() do
