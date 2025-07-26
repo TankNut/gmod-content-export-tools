@@ -73,8 +73,8 @@ local textureBlacklist = {
 }
 
 local function processMaterial(path)
-	if path == "___error" then
-		err("*** Encountered ___error material, expect missing materials! ***")
+	if path == "___error" or Material(path):GetName() == "___error" then
+		err("*** Encountered ___error material, some materials may be missing! ***")
 
 		return
 	end
