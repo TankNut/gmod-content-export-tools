@@ -1,8 +1,6 @@
 local mountFilter = CreateClientConVar("cet_filter_mount", "garrysmod,hl2,cstrike", true, false, "Ignores any files provided by these mounted games")
 local folderFilter = CreateClientConVar("cet_filter_folders", "", true, false, "Ignores any files matching these partial paths")
 
-local sanity = CreateClientConVar("cet_sanity", "1", true, false, "How many bulk operations can run per frame", 1)
-
 local baseColor = Color(255, 255, 255)
 local okColor = Color(0, 255, 0)
 local warnColor = Color(255, 191, 0)
@@ -221,32 +219,30 @@ local function handleBulk(files, func)
 	local count = #files
 
 	ok("Found %s files to process", count)
-	warn("Run cet_abort to abort processing")
+	warn("Run export_abort to abort processing")
 
 	local i = 1
 
-	hook.Add("PostRender", "cet_bulk_process", function()
-		for _ = 1, sanity:GetInt() do
-			if i > count then
-				msg("Finished running %s exports!", count)
-				hook.Remove("PostRender", "cet_bulk_process")
+	hook.Add("PostRender", "cet_bulk", function()
+		if i > count then
+			msg("Finished running %s exports!", count)
+			hook.Remove("PostRender", "cet_bulk")
 
-				return
-			end
-
-			msg("Bulk processing: %s/%s (%.2f%%)", i, count, (i / count) * 100)
-
-			func(files[i])
-			finish()
-
-			i = i + 1
+			return
 		end
+
+		msg("Bulk processing: %s/%s (%.2f%%)", i, count, (i / count) * 100)
+
+		func(files[i])
+		finish()
+
+		i = i + 1
 	end)
 end
 
-concommand.Add("cet_abort", function()
+concommand.Add("export_abort", function()
 	msg("Aborted processing")
-	hook.Remove("PostRender", "cet_bulk_process")
+	hook.Remove("PostRender", "cet_bulk")
 end)
 
 concommand.Add("cet_export_mdl", function(_, _, _, mdl)
