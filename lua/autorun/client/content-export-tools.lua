@@ -55,12 +55,6 @@ local function addFile(path)
 		return false
 	end
 
-	if file.Exists("_export/" .. path, "DATA") then
-		warn("Skipping %s: File already exists in _export", path)
-
-		return false
-	end
-
 	fileList[path] = true
 
 	ok("Found file: %s", path)
