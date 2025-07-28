@@ -1,4 +1,3 @@
-local mountFilter = CreateClientConVar("cet_filter_mount", "garrysmod,hl2,cstrike", true, false, "Ignores any files provided by these mounted games")
 local folderFilter = CreateClientConVar("cet_filter_folders", "", true, false, "Ignores any files matching these partial paths")
 
 local baseColor = Color(255, 255, 255)
@@ -11,21 +10,33 @@ local function ok(str, ...) MsgC(okColor, "\t", string.format(str, ...), "\n") e
 local function warn(str, ...) MsgC(warnColor, "\t", string.format(str, ...), "\n") end
 local function err(str, ...) MsgC(errorColor, "\t", string.format(str, ...), "\n") end
 
-local parsedMounts = string.Explode(",", mountFilter:GetString())
 local parsedfolders = string.Explode(",", folderFilter:GetString())
 
-cvars.AddChangeCallback("cet_filter_mount", function(_, _, new) parsedMounts = string.Explode(",", new) end)
 cvars.AddChangeCallback("cet_filter_folders", function(_, _, new) parsedfolders = string.Explode(",", new) end)
 
 file.CreateDir("_export")
 
-local function checkFilter(path)
-	for _, mountPath in ipairs(parsedMounts) do
-		if file.Exists(path, mountPath) then
-			warn("Skipping %s: Part of mount '%s'", path, mountPath)
+local mounts = {
+	"THIRDPARTY",
+	"WORKSHOP",
+	"DOWNLOAD"
+}
 
-			return false
+local function checkFilter(path)
+	local mountCheck = false
+
+	for _, mountPath in ipairs(mounts) do
+		if file.Exists(path, mountPath) then
+			mountCheck = true
+
+			break
 		end
+	end
+
+	if not mountCheck then
+		warn("Skipping %s: Base or mounted game content", path, mountPath)
+
+		return false
 	end
 
 	for _, folderPath in ipairs(parsedfolders) do
