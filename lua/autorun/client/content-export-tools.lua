@@ -152,6 +152,41 @@ local function processSoundscript(snd)
 	end
 end
 
+local function processParticles(path)
+	msg("PCF: %s", path)
+
+	if not addFile(path) then
+		return
+	end
+
+	local handle = file.Open(path, "rb", "GAME")
+	local contents = handle:Read()
+
+	handle:Close()
+
+	local materialLines = string.Explode(".vmt", contents)
+	local materials = {}
+
+	for k, line in ipairs(materialLines) do
+		if k == #materialLines then
+			continue
+		end
+
+		local cursor = #line
+
+		-- Navigate from the back to the front of the string
+		while string.byte(line[cursor - 1]) != 0x05 and cursor > 0 do
+			cursor = cursor - 1
+		end
+
+		materials[string.Replace(string.sub(line, cursor), "\\", "/")] = true
+	end
+
+	for mat in pairs(materials) do
+		processMaterial(mat)
+	end
+end
+
 local function getFileList(basePath, filetypes)
 	local foundFiles = {}
 
@@ -194,6 +229,10 @@ local function getFileList(basePath, filetypes)
 end
 
 local function write(path, contents)
+	if string.Right(path, 4) == ".pcf" then
+		path = path .. ".dat"
+	end
+
 	file.CreateDir(string.GetPathFromFilename(path))
 	file.Write(path, contents)
 end
@@ -207,10 +246,11 @@ local function finish()
 
 	for path in pairs(fileList) do
 		i = i + 1
+
 		write("_export/" .. path, file.Read(path, "GAME"))
 	end
 
-	msg(string.format("Exported %s files to data/_export/", i))
+	msg(string.format("Wrote %s files to data/_export/", i))
 
 	fileList = {}
 end
@@ -318,4 +358,14 @@ concommand.Add("soundscript_export_bulk", function(_, _, _, soundscript)
 
 	init()
 	handleBulk(scripts, processSoundscript)
+end)
+
+concommand.Add("pcf_export", function(_, _, _, pcf)
+	if string.Right(pcf, 4) != ".pcf" then
+		return
+	end
+
+	init()
+	processParticles(pcf)
+	finish()
 end)
