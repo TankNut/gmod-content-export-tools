@@ -73,13 +73,13 @@ local textureBlacklist = {
 }
 
 local function processMaterial(path)
+	msg("Material: %s", path)
+
 	if path == "___error" or Material(path):GetName() == "___error" then
-		err("*** Encountered ___error material, some materials may be missing! ***")
+		err("*** Encountered ___error material, files may be missing! ***")
 
 		return
 	end
-
-	msg("Material: %s", path)
 
 	if not addFile("materials/" .. path .. ".vmt") then
 		return
