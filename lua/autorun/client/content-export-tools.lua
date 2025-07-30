@@ -137,6 +137,14 @@ local function processModel(path)
 	for _, mat in ipairs(getModelMaterials(path)) do
 		processMaterial(mat)
 	end
+
+	local modelInfo = util.GetModelInfo(path)
+
+	if modelInfo and modelInfo.IncludeModels then
+		for _, includeMdl in ipairs(modelInfo.IncludeModels) do
+			processModel(includeMdl)
+		end
+	end
 end
 
 local function processSoundscript(snd)
