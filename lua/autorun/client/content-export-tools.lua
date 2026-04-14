@@ -19,7 +19,8 @@ file.CreateDir("_export")
 local mounts = {
 	"THIRDPARTY",
 	"WORKSHOP",
-	"DOWNLOAD"
+	"DOWNLOAD",
+	"BSP"
 }
 
 local function checkFilter(path)
